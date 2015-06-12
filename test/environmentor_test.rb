@@ -36,6 +36,14 @@ end
 
 module TestRequiredConfig; end
 
+class TestClass
+  extend Environmentor::Configurable
+
+  environmentor.with_mapper :env do
+    attr_config :test_value
+  end
+end
+
 class EnvironmentorTest < Test::Unit::TestCase
   def test_plain_value
     assert_equal "hello", TestConfig.test_value
@@ -87,4 +95,8 @@ class EnvironmentorTest < Test::Unit::TestCase
     assert_equal "klaxon", TestConfig.good_service.things.stuff
   end
 
+  def test_values_in_class
+    assert_equal "hello", TestClass.test_value
+    assert_equal "hello", TestClass.new.test_value
+  end
 end
