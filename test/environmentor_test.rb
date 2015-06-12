@@ -6,6 +6,10 @@ ENV['BOOL_TRUE_VALUE'] = "woo"
 ENV['BOOL_FALSE_VALUE'] = "false"
 ENV['SENSIBLE_NAME'] = "cheese"
 
+ENV['GOOD_SERVICE_TOKEN'] = "xxyyzz"
+ENV['GOOD_SERVICE_ENABLED'] = "1"
+ENV['GOOD_SERVICE_THINGS_STUFF'] = "klaxon"
+
 module TestConfig
   extend Environmentor::Configurable
 
@@ -18,6 +22,15 @@ module TestConfig
     attr_config :bool_true_value, type: :bool
     attr_config :bool_false_value, type: :bool
     attr_config :weird_name, mappers: {env: {full_name: 'SENSIBLE_NAME'}}
+
+    namespace :good_service do
+      attr_config :token
+      attr_config :enabled, type: :bool, default: true
+
+      namespace :things do
+        attr_config :stuff
+      end
+    end
   end
 end
 
@@ -64,4 +77,14 @@ class EnvironmentorTest < Test::Unit::TestCase
   def test_env_full_name
     assert_equal "cheese", TestConfig.weird_name
   end
+
+  def test_basic_namespace
+    assert_equal "xxyyzz", TestConfig.good_service.token
+    assert_equal true, TestConfig.good_service.enabled
+  end
+
+  def test_nested_namespace
+    assert_equal "klaxon", TestConfig.good_service.things.stuff
+  end
+
 end

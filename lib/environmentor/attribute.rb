@@ -12,12 +12,13 @@ module Environmentor
       end
     end
 
-    attr_reader :name, :type, :required, :default
+    attr_reader :name, :type, :required, :default, :namespace_chain
     attr_accessor :type_coercer
 
-    def initialize(name, type: :string, required: true, default: nil, mappers: {})
+    def initialize(name, namespace_chain, type: :string, required: true, default: nil, mappers: {})
       raise ArgumentError, "#{type.inspect} isn't a valid type" unless type_coercer.valid_type?(type)
       @name = name
+      @namespace_chain = namespace_chain
       @type = type
       @required = required
       @default = default

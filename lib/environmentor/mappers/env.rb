@@ -13,14 +13,11 @@ module Environmentor
       end
 
       def value_for_attribute(attr, name: nil, full_name: nil)
-        k = if name
-              # TODO: namespacing
-              name
-            elsif full_name
-              full_name
-            else
-              attr.name.to_s.upcase
-            end
+        k = full_name || (attr.namespace_chain.map { |s|
+          self.class.opts_from_mappers_hash(s.opts)[:prefix] || s.name &&
+            (s.name.to_s.upcase + '_')
+        }.compact.join('') + (name || attr.name.to_s.upcase))
+
         k.prepend @prefix
 
         if ENV.has_key?(k)
