@@ -44,6 +44,12 @@ class TestClass
   end
 end
 
+class DelegateConfigClass
+  extend Environmentor::Configurable
+
+  environmentor.delegate_to TestConfig
+end
+
 class EnvironmentorTest < Test::Unit::TestCase
   def test_plain_value
     assert_equal "hello", TestConfig.test_value
@@ -98,5 +104,10 @@ class EnvironmentorTest < Test::Unit::TestCase
   def test_values_in_class
     assert_equal "hello", TestClass.test_value
     assert_equal "hello", TestClass.new.test_value
+  end
+
+  def test_delegated
+    assert_equal "hello", DelegateConfigClass.test_value
+    assert_equal "hello", DelegateConfigClass.new.test_value
   end
 end
