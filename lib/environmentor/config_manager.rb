@@ -11,23 +11,14 @@ module Environmentor
     end
 
     def with_mapper(mappers, **opts, &block)
-      mappers = Array(mappers)
-      mappers.map! { |m|
-        case m
-        when Environmentor::Mappers::Base
-          m
-        when Symbol, String
-          Environmentor::Mappers::Base::Names.fetch(m.to_sym).new
-        else
-          raise "#{m.inspect} is not a recognised mapper"
-        end
-      }
-      mappers.compact!
+      mappers = Array(mappers).
+        map { |m| Environmentor::Mappers.deduce(m, **opts) }.
+        compact
 
-      s = Schema.new(mappers, **opts, &block)
-      s.map_to @mod
-      @schemas << s
-      nil
+      Schema.new(mappers, **opts, &block).tap do |s|
+        s.map_to @mod
+        @schemas << s
+      end
     end
 
     def delegate_to(mod)
