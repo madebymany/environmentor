@@ -3,6 +3,7 @@ require_relative 'attribute'
 module Environmentor
   class Schema
 
+    attr_accessor :defined_at
     attr_reader :attrs, :parent, :name, :opts
 
     def initialize(mappers, parent = nil, name = nil, **opts, &block)
@@ -17,21 +18,43 @@ module Environmentor
       @opts = opts
       @attrs = {}
       @schemas = []
-      instance_exec(&block) if block_given?
+      @defined_at = opts[:defined_at] || caller.first
+
+      if block_given?
+        instance_exec(&block)
+        validate!
+      end
     end
 
     def attr_config(name, **opts)
-      (attrs[name] = Attribute.new(name, @namespace_chain, **opts)).tap do |attr|
-        check_attr_exists! attr
-      end
+      attrs[name] = Attribute.new(name, @namespace_chain, **opts)
       nil
     end
 
     def namespace(name, &block)
-      @schemas << Schema.new(@mappers, self, name, **@opts).tap { |s|
+      opts = @opts.merge(defined_at: caller.first)
+      @schemas << Schema.new(@mappers, self, name, **opts).tap { |s|
         s.instance_exec(&block)
       }
       nil
+    end
+
+    def validate
+      Attribute::ValidationErrors.new.tap do |errors|
+        attrs.each do |_, attr|
+          errors.concat validate_attr(attr)
+        end
+
+        @schemas.each do |schema|
+          errors.concat schema.validate
+        end
+      end
+    end
+
+    def validate!
+      validate.tap do |errors|
+        handle_attr_errors(errors) unless errors.success?
+      end
     end
 
     def map_to(mod)
@@ -65,11 +88,25 @@ module Environmentor
       attr.get_from_mappers(@mappers)
     end
 
-    def check_attr_exists!(attr)
-      attr.check_exists_in_mappers!(@mappers)
+  protected
+
+    def validate_attr(attr)
+      attr.validate_in_mappers(@mappers)
+    end
+
+    def handle_attr_errors(errors)
+      # TODO: maybe make customisable somehow. At least this is overridable
+      # in isolation.
+      puts "#{$0}: fatal: failed to validate external config defined at"
+      puts defined_at << ":"
+      errors.each do |e|
+        puts "* " << e.message
+      end
+      exit 1
     end
 
   private
+
     def build_namespace_chain
       s = self
       [].tap do |out|
@@ -79,5 +116,6 @@ module Environmentor
         end
       end
     end
+
   end
 end

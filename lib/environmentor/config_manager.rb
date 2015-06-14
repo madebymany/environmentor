@@ -12,11 +12,12 @@ module Environmentor
     end
 
     def with_mapper(mappers, **opts, &block)
+      defined_at = caller.first
       mappers = Array(mappers).
         map { |m| Environmentor::Mappers.deduce(m, **opts) }.
         compact
 
-      Schema.new(mappers, **opts, &block).tap do |s|
+      Schema.new(mappers, defined_at: defined_at, **opts, &block).tap do |s|
         s.map_to @mod
         @schemas << s
       end

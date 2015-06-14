@@ -25,6 +25,15 @@ module Environmentor
       def value_for_attribute(attr, **opts)
         raise NotImplementedError
       end
+
+      def human_description
+        raise NotImplementedError
+      end
+
+      def human_attr_location(attr)
+        raise NotImplementedError
+      end
+
     end
   end
 end

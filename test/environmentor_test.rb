@@ -58,10 +58,12 @@ class EnvironmentorTest < Minitest::Test
   def test_required_value
     env_mapper = Environmentor::Mappers::Env.new
     s = Environmentor::Schema.new([env_mapper])
+    s.attr_config :required_value, required: true
+    errors = s.validate!
 
-    assert_raises Environmentor::Attribute::RequiredValueNotFound do
-      s.attr_config :required_value, required: true
-    end
+    assert !errors.success?, "errors expected"
+    assert_equal 1, errors.size
+    assert_equal Environmentor::Attribute::ValidationError::Missing, errors.first.class
   end
 
   def test_default_value

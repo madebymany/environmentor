@@ -2,30 +2,63 @@ require_relative 'type_coercer'
 
 module Environmentor
   class Attribute
-    class RequiredValueNotFound < StandardError
-      def initialize(attr)
+
+    class ValidationError < StandardError
+      def initialize(attr, mappers, opts)
         @attr = attr
+        @mappers = mappers
+        @opts = opts
       end
 
-      def message
-        "Couldn't find value for #{@attr.name}"
+      def message(msg = nil)
+        decorate_msg(msg || "Validation error")
       end
+
+      class Missing < ValidationError
+        def message
+          super "Couldn't find value"
+        end
+      end
+
+    protected
+
+      def decorate_msg(msg)
+        msg << " for #{@attr.full_name}"
+        msg << ", “#{@attr.description}”" if @attr.description
+        msg << " (looked in " <<
+          @mappers.map { |m|
+            opts = m.class.opts_from_mappers_hash(@opts)
+            "#{m.human_attr_location(@attr, **opts)} in #{m.human_description}"
+          }.join(', ') <<
+          ")"
+      end
+
     end
 
-    attr_reader :name, :type, :required, :default, :namespace_chain
+    class ValidationErrors < Array
+      alias_method :success?, :empty?
+    end
+
+    attr_reader :name, :type, :required, :default, :namespace_chain,
+      :description
     attr_accessor :type_coercer
 
-    def initialize(name, namespace_chain, type: :string, required: true, default: nil, mappers: {})
+    def initialize(name, namespace_chain, type: :string, required: true, default: nil, description: nil, help: nil, mappers: {})
       raise ArgumentError, "#{type.inspect} isn't a valid type" unless type_coercer.valid_type?(type)
       @name = name
       @namespace_chain = namespace_chain
       @type = type
       @required = required
       @default = default
+      @description = description || help
       @mappers_opts = mappers
     end
 
     alias :required? :required
+
+    def full_name
+      (namespace_chain.map(&:name).compact << name).join('.')
+    end
 
     def get_from_mappers(mappers)
       return @value if defined?(@value)
@@ -43,7 +76,9 @@ module Environmentor
 
       # TODO: better 'absent' value for default, so that a default can be nil?
       return default unless default.nil?
-      raise RequiredValueNotFound, self if required
+      if required?
+        raise ValidationError::Missing.new(self, mappers, @mappers_opts)
+      end
       nil
     end
 
@@ -52,8 +87,16 @@ module Environmentor
       type_coercer.coerce_string_to(type, str_value)
     end
 
-    def check_exists_in_mappers!(mappers)
-      get_from_mappers(mappers) if required?
+    def validate_in_mappers(mappers)
+      ValidationErrors.new.tap do |out|
+        if required?
+          begin
+            get_from_mappers(mappers)
+          rescue ValidationError::Missing => e
+            out << e
+          end
+        end
+      end
     end
 
     def clear_cache!
