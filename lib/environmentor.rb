@@ -1,6 +1,6 @@
-require "environmentor/version"
-require "environmentor/configurable"
-require "environmentor/mappers/env"
+require_relative 'environmentor/version'
+require_relative 'environmentor/configurable'
+require_relative 'environmentor/mappers'
 
 module Environmentor
   extend self

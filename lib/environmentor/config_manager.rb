@@ -1,3 +1,4 @@
+require_relative 'mappers'
 require_relative 'schema'
 
 module Environmentor
