@@ -1,2 +1,5 @@
-require 'test/unit'
+require 'minitest/autorun'
+require "minitest/reporters"
+Minitest::Reporters.use!
+
 require 'environmentor'

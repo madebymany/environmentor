@@ -50,7 +50,7 @@ class DelegateConfigClass
   environmentor.delegate_to TestConfig
 end
 
-class EnvironmentorTest < Test::Unit::TestCase
+class EnvironmentorTest < Minitest::Test
   def test_plain_value
     assert_equal "hello", TestConfig.test_value
   end
@@ -59,7 +59,7 @@ class EnvironmentorTest < Test::Unit::TestCase
     env_mapper = Environmentor::Mappers::Env.new
     s = Environmentor::Schema.new([env_mapper])
 
-    assert_raise Environmentor::Attribute::RequiredValueNotFound do
+    assert_raises Environmentor::Attribute::RequiredValueNotFound do
       s.attr_config :required_value, required: true
     end
   end
