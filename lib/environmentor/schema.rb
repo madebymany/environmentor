@@ -4,7 +4,7 @@ module Environmentor
   class Schema
 
     attr_accessor :defined_at
-    attr_reader :attrs, :parent, :name, :opts
+    attr_reader :attrs, :parent, :name, :opts, :children
 
     def initialize(mappers, parent = nil, name = nil, **opts, &block)
       @parent = parent
@@ -17,7 +17,7 @@ module Environmentor
       @mappers = mappers
       @opts = opts
       @attrs = {}
-      @schemas = []
+      @children = []
       @defined_at = opts[:defined_at] || caller.first
 
       if block_given?
@@ -33,7 +33,7 @@ module Environmentor
 
     def namespace(name, &block)
       opts = @opts.merge(defined_at: caller.first)
-      @schemas << Schema.new(@mappers, self, name, **opts).tap { |s|
+      @children << Schema.new(@mappers, self, name, **opts).tap { |s|
         s.instance_exec(&block)
       }
       nil
@@ -45,7 +45,7 @@ module Environmentor
           errors.concat validate_attr(attr)
         end
 
-        @schemas.each do |schema|
+        @children.each do |schema|
           errors.concat schema.validate
         end
       end
@@ -69,7 +69,7 @@ module Environmentor
         end
       end
 
-      @schemas.each do |s|
+      @children.each do |s|
         next unless s.name
         ns_mod = Module.new
         s.map_to ns_mod
@@ -94,6 +94,7 @@ module Environmentor
       attr.validate_in_mappers(@mappers)
     end
 
+    # :nocov:
     def handle_attr_errors(errors)
       # TODO: maybe make customisable somehow. At least this is overridable
       # in isolation.
@@ -104,6 +105,7 @@ module Environmentor
       end
       exit 1
     end
+    # :nocov:
 
   private
 

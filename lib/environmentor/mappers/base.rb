@@ -22,6 +22,7 @@ module Environmentor
         @opts = opts
       end
 
+      # :nocov:
       def value_for_attribute(attr, **opts)
         raise NotImplementedError
       end
@@ -33,6 +34,7 @@ module Environmentor
       def human_attr_location(attr)
         raise NotImplementedError
       end
+      # :nocov:
 
     end
   end

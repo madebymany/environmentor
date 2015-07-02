@@ -4,6 +4,8 @@ module Environmentor
   class Attribute
 
     class ValidationError < StandardError
+      attr_reader :attr
+
       def initialize(attr, mappers, opts)
         @attr = attr
         @mappers = mappers
