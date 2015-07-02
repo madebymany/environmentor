@@ -86,7 +86,7 @@ module Environmentor
 
     def get_from_mapper(mapper, **opts)
       str_value = mapper.value_for_attribute(self, **opts) or return nil
-      type_coercer.coerce_string_to(type, str_value)
+      type_coercer.coerce_to(type, str_value)
     end
 
     def validate_in_mappers(mappers)

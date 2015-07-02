@@ -4,21 +4,51 @@ module Environmentor
 
     extend self
 
-    def coerce_string_to(type, str_val)
-      case type
-      when :string, :str
-        str_val
-      when :boolean, :bool
-        ![nil, "", "false"].include?(str_val.strip.downcase)
-      when :integer, :int
-        str_val.to_i
-      else
+    def coerce_to(type, val)
+      coercer = type_coercers[type] or
         raise UnknownType, type
-      end
+      coercer.call val
     end
 
     def valid_type?(type)
-      %i[ string str boolean bool integer int ].include?(type)
+      type_coercers.keys.include? type
     end
+
+    def register_type(*type_names, &block)
+      raise ArgumentError, "No type names given" if type_names.empty?
+      raise ArgumentError, "No block given" unless block_given?
+      raise ArgumentError, "Block should have arity of 1, taking value to coerce" unless block.arity == 1
+
+      type_names.each do |tn|
+        type_coercers[tn] = block
+      end
+      nil
+    end
+
+  private
+
+    def type_coercers
+      @type_coercers ||= {}
+    end
+
+    register_type :string, :str do |val|
+      val.to_s
+    end
+
+    register_type :integer, :int do |val|
+      val.to_i
+    end
+
+    register_type :boolean, :bool do |val|
+      case val
+      when true, false
+        val
+      when nil, "false", 0, "0", "no", "f"
+        false
+      else
+        val.respond_to?(:empty?) ? !val.empty? : true
+      end
+    end
+
   end
 end
