@@ -36,7 +36,7 @@ module AppConfig
 end
 ```
 
-`Environmentor::Configurable` provides the method `environmentor`, which is your entry point to the API here. This is so that the namespace of your module is as unpolluted as possible. `with_mapper` creates a new schema, using mappers that you give. You can pass mappers as their actual `Environmentor::Mapper` instance or by their symbol name. This will create a new mapper with default options.
+`Environmentor::Configurable` provides the method `environmentor`, which is the DSL's entry point to the API. This is so that the namespace of your module is as unpolluted as possible. `with_mapper` creates a new schema, using mappers that you give. You can pass mappers as their actual `Environmentor::Mapper` instance or by their symbol name. This will create a new mapper with default options.
 
 The schema defines one attribute. The `:env` mapper, using as it does environment variables, will guess that it's looking for a variable called `WELCOME_MESSAGE`. If it's blank, there will be an error.
 
