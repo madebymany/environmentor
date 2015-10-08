@@ -1,6 +1,9 @@
 # Environmentor
 
+
 by Dan Brown <dan@stompydan.net>
+
+[![Build Status](https://travis-ci.org/madebymany/environmentor.svg?branch=master)](https://travis-ci.org/madebymany/environmentor)
 
 Environmentor is a gem to help you provide the correct configuration for your Ruby application from the environment, and/or a configuration store. You define the configuration values you require, with certain types, and Environmentor will abort with a helpful error message if anything required is missing. The current alternatives are less declarative (so more room for error) or leave the discovery of missing configuration until runtime – often too late. Errors are collected and all are shown at once, making it easy to fix all missing or incorrect configuration in one go.
 
