@@ -34,6 +34,12 @@ module Environmentor
       end
     end
 
+    def delegate_from(mod)
+      schemas.each do |s|
+        s.map_to mod
+      end
+    end
+
     alias :with_mappers :with_mapper
   end
 end

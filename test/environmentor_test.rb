@@ -1,5 +1,7 @@
 require 'test_helper'
 
+module DelegateFromModule; end
+
 module TestConfig
   extend Environmentor::Configurable
 
@@ -22,6 +24,8 @@ module TestConfig
       end
     end
   end
+
+  environmentor.delegate_from DelegateFromModule
 end
 
 module TestRequiredConfig; end
@@ -101,5 +105,9 @@ class EnvironmentorTest < Minitest::Test
   def test_delegated
     assert_equal "hello", DelegateConfigClass.test_value
     assert_equal "hello", DelegateConfigClass.new.test_value
+  end
+
+  def test_delegated_from
+    assert_equal "hello", DelegateFromModule.test_value
   end
 end
