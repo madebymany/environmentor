@@ -104,4 +104,28 @@ class SchemaTest < Minitest::Test
     assert { schema.get_attr(attr) == "hello" }
   end
 
+  def test_file_contents_type_errors
+    schema = create {
+      attr_config :missing_file, type: :file_contents
+    }
+
+    errs = schema.validate
+    assert { errs.size == 1 }
+  end
+
+  def test_file_content_type
+    schema = create {
+      attr_config :present_file, type: :file_contents
+    }
+
+    errs = schema.validate
+    assert { errs.size == 0 }
+
+    mod = Module.new
+    schema.map_to mod
+
+    assert { mod.present_file.size > 0 }
+    assert { mod.present_file.include?("ENV") }
+  end
+
 end

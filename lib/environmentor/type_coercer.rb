@@ -50,5 +50,20 @@ module Environmentor
       end
     end
 
+    register_type :file_contents do |val|
+      case val
+      when Pathname
+        val.read
+      when String
+        if val.size == 0
+          raise ValueError.new("cannot get file contents when name is empty")
+        else
+          File.read val
+        end
+      else
+        raise ValueError.new("invalid path name")
+      end
+    end
+
   end
 end

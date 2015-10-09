@@ -7,3 +7,6 @@ ENV['SENSIBLE_NAME'] = "cheese"
 ENV['GOOD_SERVICE_TOKEN'] = "xxyyzz"
 ENV['GOOD_SERVICE_ENABLED'] = "1"
 ENV['GOOD_SERVICE_THINGS_STUFF'] = "klaxon"
+
+ENV['MISSING_FILE'] = "missing.txt"
+ENV['PRESENT_FILE'] = __FILE__

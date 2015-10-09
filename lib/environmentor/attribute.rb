@@ -6,14 +6,15 @@ module Environmentor
     class ValidationError < StandardError
       attr_reader :attr
 
-      def initialize(attr, mappers, opts)
+      def initialize(attr, mappers, opts, message: "Validation error")
         @attr = attr
         @mappers = mappers
         @opts = opts
+        @message = message
       end
 
       def message(msg = nil)
-        decorate_msg(msg || "Validation error")
+        decorate_msg(msg || @message)
       end
 
       class Missing < ValidationError
@@ -94,8 +95,11 @@ module Environmentor
         if required?
           begin
             get_from_mappers(mappers)
-          rescue ValidationError::Missing => e
+          rescue ValidationError => e
             out << e
+          rescue StandardError => e
+            out << ValidationError.new(self, mappers, @mappers_opts,
+                                       message: e.message)
           end
         end
       end
