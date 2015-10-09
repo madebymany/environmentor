@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Environmentor::VERSION
   spec.authors       = ["Dan Brown"]
   spec.email         = ["dan@madebymany.co.uk"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{ A library to collect and validate configuration options from external sources. }
+  # spec.description   = %q{TODO: Write a longer description. Optional.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
