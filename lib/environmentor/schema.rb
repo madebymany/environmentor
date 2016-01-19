@@ -88,6 +88,10 @@ module Environmentor
       attr.get_from_mappers(@mappers)
     end
 
+    def absent
+      ::Environmentor::Attribute::Absent
+    end
+
   protected
 
     def validate_attr(attr)

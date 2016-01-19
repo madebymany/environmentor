@@ -2,6 +2,7 @@ require_relative 'type_coercer'
 
 module Environmentor
   class Attribute
+    Absent = Object.new
 
     class ValidationError < StandardError
       attr_reader :attr
@@ -46,7 +47,7 @@ module Environmentor
       :description
     attr_accessor :type_coercer
 
-    def initialize(name, namespace_chain, type: :string, required: true, default: nil, description: nil, help: nil, mappers: {})
+    def initialize(name, namespace_chain, type: :string, required: true, default: Absent, description: nil, help: nil, mappers: {})
       raise ArgumentError, "#{type.inspect} isn't a valid type" unless type_coercer.valid_type?(type)
       @name = name
       @namespace_chain = namespace_chain
@@ -77,8 +78,7 @@ module Environmentor
         end
       end
 
-      # TODO: better 'absent' value for default, so that a default can be nil?
-      return default unless default.nil?
+      return default unless Absent.equal?(default)
       if required?
         raise ValidationError::Missing.new(self, mappers, @mappers_opts)
       end
