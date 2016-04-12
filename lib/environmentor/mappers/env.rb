@@ -39,7 +39,7 @@ module Environmentor
             (s.name.to_s.upcase + '_')
         }.compact.join('') + (name || attr.name.to_s.upcase))
 
-        k.prepend @prefix
+        @prefix + k
       end
 
     end
