@@ -2,6 +2,8 @@ ENV['TEST_VALUE'] = "hello"
 ENV['INT_VALUE'] = "42"
 ENV['BOOL_TRUE_VALUE'] = "woo"
 ENV['BOOL_FALSE_VALUE'] = "false"
+ENV['ARRAY_VALUE'] = "one,two,three"
+ENV['ARRAY_WITH_SPACES_VALUE'] = "one, two, three"
 ENV['SENSIBLE_NAME'] = "cheese"
 
 ENV['GOOD_SERVICE_TOKEN'] = "xxyyzz"

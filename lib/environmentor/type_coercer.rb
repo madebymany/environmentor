@@ -1,3 +1,4 @@
+require 'pry'
 module Environmentor
   module TypeCoercer
     class UnknownType < StandardError; end
@@ -37,6 +38,10 @@ module Environmentor
 
     register_type :integer, :int do |val|
       val.to_i
+    end
+
+    register_type :array, :array do |val|
+      val.split(/, |,/)
     end
 
     register_type :boolean, :bool do |val|
