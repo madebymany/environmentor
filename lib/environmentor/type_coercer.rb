@@ -1,4 +1,3 @@
-require 'pry'
 module Environmentor
   module TypeCoercer
     class UnknownType < StandardError; end
