@@ -13,6 +13,8 @@ module TestConfig
     attr_config :int_value, type: :int
     attr_config :bool_true_value, type: :bool
     attr_config :bool_false_value, type: :bool
+    attr_config :array_value, type: :array
+    attr_config :array_with_spaces_value, type: :array
     attr_config :weird_name, mappers: {env: {full_name: 'SENSIBLE_NAME'}}
 
     namespace :good_service do
@@ -93,6 +95,14 @@ class EnvironmentorTest < Minitest::Test
 
   def test_bool_false_value
     assert_equal false, TestConfig.bool_false_value
+  end
+
+  def test_array_value
+    assert_equal %w[one two three], TestConfig.array_value
+  end
+
+  def test_array_with_spaces_value
+    assert_equal %w[one two three], TestConfig.array_with_spaces_value
   end
 
   def test_env_full_name
