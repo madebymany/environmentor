@@ -40,7 +40,7 @@ module Environmentor
     end
 
     register_type :array, :array do |val|
-      val.split(/, |,/)
+      val.split(',').map(&:strip)
     end
 
     register_type :boolean, :bool do |val|
